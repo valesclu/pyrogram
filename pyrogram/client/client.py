@@ -244,6 +244,9 @@ class Client:
         self.is_started = False
         self.session.stop()
 
+        for i in self.extra_sessions.values():
+            i.stop()
+
         for _ in range(self.UPDATES_WORKERS):
             self.updates_queue.put(None)
 
