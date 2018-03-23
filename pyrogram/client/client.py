@@ -166,7 +166,7 @@ class Client:
         self.auth_key = None
         self.user_id = None
 
-        self.extra_auth_keys = {}
+        self.extra_sessions = {}
 
         self.rnd_id = MsgId
 
@@ -2214,23 +2214,20 @@ class Client:
                  version: int = 0,
                  size: int = None,
                  progress: callable = None) -> str:
-        if dc_id != self.dc_id:
-            if dc_id not in self.extra_auth_keys:
-                log.info("Creating new Key in DC{}".format(dc_id))
 
+        if dc_id != self.dc_id:
+            if dc_id not in self.extra_sessions:
                 exported_auth = self.send(
                     functions.auth.ExportAuthorization(
                         dc_id=dc_id
                     )
                 )
 
-                self.extra_auth_keys[dc_id] = Auth(dc_id, self.test_mode, self.proxy).create()
-
                 session = Session(
                     dc_id,
                     self.test_mode,
                     self.proxy,
-                    self.extra_auth_keys[dc_id],
+                    Auth(dc_id, self.test_mode, self.proxy).create(),
                     self.api_key.api_id
                 )
 
@@ -2242,28 +2239,25 @@ class Client:
                         bytes=exported_auth.bytes
                     )
                 )
-            else:
-                log.info("Using existent key for DC{}".format(dc_id))
 
+                self.extra_sessions[dc_id] = session
+            else:
+                session = self.extra_sessions[dc_id]
+        else:
+            if dc_id not in self.extra_sessions:
                 session = Session(
                     dc_id,
                     self.test_mode,
                     self.proxy,
-                    self.extra_auth_keys[dc_id],
+                    self.auth_key,
                     self.api_key.api_id
                 )
 
                 session.start()
-        else:
-            session = Session(
-                dc_id,
-                self.test_mode,
-                self.proxy,
-                self.auth_key,
-                self.api_key.api_id
-            )
 
-            session.start()
+                self.extra_sessions[dc_id] = session
+            else:
+                session = self.extra_sessions[dc_id]
 
         if volume_id:  # Photos are accessed by volume_id, local_id, secret
             location = types.InputFileLocation(
@@ -2319,22 +2313,21 @@ class Client:
                         )
 
             elif isinstance(r, types.upload.FileCdnRedirect):
-                if r.dc_id not in self.extra_auth_keys:
-                    log.info("Creating new Key in DC{}".format(r.dc_id))
-                    self.extra_auth_keys[r.dc_id] = Auth(r.dc_id, self.test_mode, self.proxy).create()
+                if r.dc_id not in self.extra_sessions:
+                    cdn_session = Session(
+                        r.dc_id,
+                        self.test_mode,
+                        self.proxy,
+                        Auth(r.dc_id, self.test_mode, self.proxy).create(),
+                        self.api_key.api_id,
+                        is_cdn=True
+                    )
+
+                    cdn_session.start()
+                    self.extra_sessions[r.dc_id] = cdn_session
                 else:
                     log.info("Using existent key for DC{}".format(r.dc_id))
-
-                cdn_session = Session(
-                    r.dc_id,
-                    self.test_mode,
-                    self.proxy,
-                    self.extra_auth_keys[r.dc_id],
-                    self.api_key.api_id,
-                    is_cdn=True
-                )
-
-                cdn_session.start()
+                    cdn_session = self.extra_sessions[r.dc_id]
 
                 try:
                     with tempfile.NamedTemporaryFile('wb', delete=False) as f:
@@ -2399,7 +2392,8 @@ class Client:
                 except Exception as e:
                     raise e
                 finally:
-                    cdn_session.stop()
+                    pass
+                    #cdn_session.stop()
         except Exception as e:
             log.error(e, exc_info=True)
 
@@ -2412,7 +2406,8 @@ class Client:
         else:
             return file_name
         finally:
-            session.stop()
+            pass
+            #session.stop()
 
     def join_chat(self, chat_id: str):
         """Use this method to join a group chat or channel.
