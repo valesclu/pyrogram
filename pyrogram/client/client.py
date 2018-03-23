@@ -166,6 +166,8 @@ class Client:
         self.auth_key = None
         self.user_id = None
 
+        self.extra_auth_keys = {}
+
         self.rnd_id = MsgId
 
         self.peers_by_id = {}
@@ -2213,28 +2215,45 @@ class Client:
                  size: int = None,
                  progress: callable = None) -> str:
         if dc_id != self.dc_id:
-            exported_auth = self.send(
-                functions.auth.ExportAuthorization(
-                    dc_id=dc_id
+            if dc_id not in self.extra_auth_keys:
+                log.info("Creating new Key in DC{}".format(dc_id))
+
+                exported_auth = self.send(
+                    functions.auth.ExportAuthorization(
+                        dc_id=dc_id
+                    )
                 )
-            )
 
-            session = Session(
-                dc_id,
-                self.test_mode,
-                self.proxy,
-                Auth(dc_id, self.test_mode, self.proxy).create(),
-                self.api_key.api_id
-            )
+                self.extra_auth_keys[dc_id] = Auth(dc_id, self.test_mode, self.proxy).create()
 
-            session.start()
-
-            session.send(
-                functions.auth.ImportAuthorization(
-                    id=exported_auth.id,
-                    bytes=exported_auth.bytes
+                session = Session(
+                    dc_id,
+                    self.test_mode,
+                    self.proxy,
+                    self.extra_auth_keys[dc_id],
+                    self.api_key.api_id
                 )
-            )
+
+                session.start()
+
+                session.send(
+                    functions.auth.ImportAuthorization(
+                        id=exported_auth.id,
+                        bytes=exported_auth.bytes
+                    )
+                )
+            else:
+                log.info("Using existent key for DC{}".format(dc_id))
+
+                session = Session(
+                    dc_id,
+                    self.test_mode,
+                    self.proxy,
+                    self.extra_auth_keys[dc_id],
+                    self.api_key.api_id
+                )
+
+                session.start()
         else:
             session = Session(
                 dc_id,
@@ -2300,11 +2319,17 @@ class Client:
                         )
 
             elif isinstance(r, types.upload.FileCdnRedirect):
+                if r.dc_id not in self.extra_auth_keys:
+                    log.info("Creating new Key in DC{}".format(r.dc_id))
+                    self.extra_auth_keys[r.dc_id] = Auth(r.dc_id, self.test_mode, self.proxy).create()
+                else:
+                    log.info("Using existent key for DC{}".format(r.dc_id))
+
                 cdn_session = Session(
                     r.dc_id,
                     self.test_mode,
                     self.proxy,
-                    Auth(r.dc_id, self.test_mode, self.proxy).create(),
+                    self.extra_auth_keys[r.dc_id],
                     self.api_key.api_id,
                     is_cdn=True
                 )
