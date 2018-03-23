@@ -61,7 +61,7 @@ class Session:
 
     INITIAL_SALT = 0x616e67656c696361
     NET_WORKERS = 1
-    WAIT_TIMEOUT = 30
+    WAIT_TIMEOUT = 20
     MAX_RETRIES = 5
     ACKS_THRESHOLD = 8
     PING_INTERVAL = 5
@@ -308,7 +308,7 @@ class Session:
                 break
 
             try:
-                self._send(functions.PingDelayDisconnect(0, self.PING_INTERVAL + 15), False)
+                self._send(functions.PingDelayDisconnect(0, self.PING_INTERVAL + self.WAIT_TIMEOUT + 15), False)
             except (OSError, TimeoutError):
                 pass
 
@@ -400,7 +400,7 @@ class Session:
             try:
                 return self._send(data)
             except (OSError, TimeoutError):
-                (log.warning if i > 0 else log.info)("{}: {} Retrying {}".format(i, datetime.now(), type(data)))
+                (log.warning if i > 2 else log.info)("{}: {} Retrying {}".format(i, datetime.now(), type(data)))
                 continue
         else:
             return None
