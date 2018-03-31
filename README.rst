@@ -190,7 +190,7 @@ License
         </a>
     </p>
 
-.. |twitter| image:: https://img.shields.io/badge/tweet--green.svg?longCache=true&style=for-the-badge&logo=twitter&colorB=ffffff
+.. |twitter| image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
     :target: https://twitter.com/intent/tweet?text=Build%20your%20own%20custom%20Telegram%20applications%20with%20Pyrogram&url=https://github.com/pyrogram/pyrogram&hashtags=Python,Telegram,Pyrogram
     :alt: Tweet Pyrogram
 
