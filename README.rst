@@ -169,15 +169,15 @@ License
         
         <br>
         <a href="https://github.com/pyrogram/pyrogram/releases/latest">
-            Download
+            DOWNLOAD
         </a>
-        •
+        |
         <a href="https://docs.pyrogram.ml">
-            Documentation
+            DOCUMENTATION
         </a>
-        •
+        |
         <a href="https://t.me/PyrogramChat">
-            Community
+            COMMUNITY
         </a>
         <br><br>
         <a href="compiler/api/source/main_api.tl">
