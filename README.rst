@@ -191,7 +191,7 @@ License
     </p>
 
 .. |twitter| image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
-    :target: https://twitter.com/intent/tweet?text=Build your own custom Telegram client with Pyrogram: https://github.com/pyrogram/pyrogram #telegram #python #pyrogram
+    :target: https://twitter.com/intent/tweet?text=Build%20your%20own%20custom%20Telegram%20client%20with%20Pyrogram:%20https://github.com/pyrogram/pyrogram%20#Python%20#Telegram%20#Pyrogram
 
 .. |logo| image:: https://pyrogram.ml/images/logo.png
     :target: https://pyrogram.ml
