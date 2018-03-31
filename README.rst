@@ -1,7 +1,7 @@
 |header|
 
-Table of Contents
-=================
+Pyrogram |twitter|
+==================
 
 -   `About`_
 
@@ -169,15 +169,15 @@ License
         
         <br>
         <a href="https://github.com/pyrogram/pyrogram/releases/latest">
-            DOWNLOAD
+            Download
         </a>
         •
         <a href="https://docs.pyrogram.ml">
-            DOCUMENTATION
+            Documentation
         </a>
         •
         <a href="https://t.me/PyrogramChat">
-            COMMUNITY
+            Community
         </a>
         <br><br>
         <a href="compiler/api/source/main_api.tl">
@@ -189,6 +189,9 @@ License
                 alt="TgCrypto">
         </a>
     </p>
+
+.. |twitter| image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social
+    :target: https://twitter.com/intent/tweet?text=Build your own custom Telegram client with Pyrogram: https://github.com/pyrogram/pyrogram #telegram #python #pyrogram
 
 .. |logo| image:: https://pyrogram.ml/images/logo.png
     :target: https://pyrogram.ml
