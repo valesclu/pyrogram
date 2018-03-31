@@ -171,11 +171,11 @@ License
         <a href="https://github.com/pyrogram/pyrogram/releases/latest">
             DOWNLOAD
         </a>
-        |
+        •
         <a href="https://docs.pyrogram.ml">
             DOCUMENTATION
         </a>
-        |
+        •
         <a href="https://t.me/PyrogramChat">
             COMMUNITY
         </a>
